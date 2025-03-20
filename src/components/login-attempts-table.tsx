@@ -137,8 +137,8 @@ export function LoginAttemptsTable({ showSuccessful }: LoginAttemptsTableProps) 
                         onClick={handlePreviousPage}
                         disabled={currentPage === 1}
                         className={`rounded-md p-2 ${currentPage === 1
-                                ? "cursor-not-allowed text-gray-400"
-                                : "text-gray-600 hover:bg-gray-200"
+                            ? "cursor-not-allowed text-gray-400"
+                            : "text-gray-600 hover:bg-gray-200"
                             }`}
                     >
                         <ChevronLeft className="h-5 w-5" />
@@ -152,8 +152,8 @@ export function LoginAttemptsTable({ showSuccessful }: LoginAttemptsTableProps) 
                         onClick={handleNextPage}
                         disabled={currentPage === paginatedData.totalPages || paginatedData.totalPages === 0}
                         className={`rounded-md p-2 ${currentPage === paginatedData.totalPages || paginatedData.totalPages === 0
-                                ? "cursor-not-allowed text-gray-400"
-                                : "text-gray-600 hover:bg-gray-200"
+                            ? "cursor-not-allowed text-gray-400"
+                            : "text-gray-600 hover:bg-gray-200"
                             }`}
                     >
                         <ChevronRight className="h-5 w-5" />
