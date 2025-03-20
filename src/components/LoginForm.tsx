@@ -8,6 +8,7 @@ import { User } from "lucide-react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { dummyCustomers } from "../lib/dummy-data"
+import { addLoginAttempt } from "../lib/login-attempts"
 
 export function LoginForm() {
   const [customerId, setCustomerId] = useState("")
@@ -23,9 +24,26 @@ export function LoginForm() {
 
     if (customer) {
       // Store customer info in sessionStorage for the OTP page
-      sessionStorage.setItem("currentCustomer", JSON.stringify(customer))
+      sessionStorage.setItem("currentCustomer", JSON.stringify(customer));
+
+      // Record successful login attempt
+      addLoginAttempt({
+        userId: customer.id,
+        wrongId: null,
+        timestamp: new Date(),
+        success: true
+      });
+
       navigate("/verify-otp")
     } else {
+      // Record failed login attempt
+      addLoginAttempt({
+        userId: null,
+        wrongId: customerId,
+        timestamp: new Date(),
+        success: false
+      });
+
       setError("The Customer ID you entered is incorrect.")
     }
   }
