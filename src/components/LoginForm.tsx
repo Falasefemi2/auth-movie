@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useTransition } from 'react';
 import { useNavigate } from "react-router"
 import { User } from "lucide-react"
 import { Button } from "./ui/button"
@@ -13,39 +14,43 @@ import { addLoginAttempt } from "../lib/login-attempts"
 export function LoginForm() {
   const [customerId, setCustomerId] = useState("")
   const [error, setError] = useState("")
+  const [isPending, startTransition] = useTransition();
   const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
-    // Check if customer ID exists in our dummy data
-    const customer = dummyCustomers.find((c) => c.id === customerId)
+    startTransition(() => {
 
-    if (customer) {
-      // Store customer info in sessionStorage for the OTP page
-      sessionStorage.setItem("currentCustomer", JSON.stringify(customer));
+      // Check if customer ID exists in our dummy data
+      const customer = dummyCustomers.find((c) => c.id === customerId)
 
-      // Record successful login attempt
-      addLoginAttempt({
-        userId: customer.id,
-        wrongId: null,
-        timestamp: new Date(),
-        success: true
-      });
+      if (customer) {
+        // Store customer info in sessionStorage for the OTP page
+        sessionStorage.setItem("currentCustomer", JSON.stringify(customer));
 
-      navigate("/verify-otp")
-    } else {
-      // Record failed login attempt
-      addLoginAttempt({
-        userId: null,
-        wrongId: customerId,
-        timestamp: new Date(),
-        success: false
-      });
+        // Record successful login attempt
+        addLoginAttempt({
+          userId: customer.id,
+          wrongId: null,
+          timestamp: new Date(),
+          success: true
+        });
 
-      setError("The Customer ID you entered is incorrect.")
-    }
+        navigate("/verify-otp")
+      } else {
+        // Record failed login attempt
+        addLoginAttempt({
+          userId: null,
+          wrongId: customerId,
+          timestamp: new Date(),
+          success: false
+        });
+
+        setError("The Customer ID you entered is incorrect.")
+      }
+    });
   }
 
   return (
@@ -66,8 +71,8 @@ export function LoginForm() {
 
       {error && <p className="mb-4 text-sm text-[#E32213] font-bold bg-[#FBE8E7] p-2 rounded-md">{error}</p>}
 
-      <Button type="submit" className="w-full bg-[#E32213] hover:bg-red-700 text-white">
-        Continue
+      <Button type="submit" className="w-full bg-[#E32213] hover:bg-red-700 text-white" disabled={isPending}>
+        {isPending ? "Loading..." : "Continue"}
       </Button>
     </form>
   )
